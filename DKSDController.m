@@ -238,7 +238,7 @@
 	// search through the matrix to find the cell whose title matches the tool's name,
 	// and select it.
 	
-	int				row, col, rr, cc;
+	NSInteger		row, col, rr, cc;
 	NSCell*			cell;
 	
 	[mToolMatrix getNumberOfRows:&row columns:&col];
