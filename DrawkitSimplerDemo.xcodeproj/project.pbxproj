@@ -12,6 +12,9 @@
 		553CF01B1FDD9949003E9342 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 553CF01A1FDD9949003E9342 /* MainMenu.xib */; };
 		553CF01C1FDD9AD8003E9342 /* DKDrawKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763F8DC51A9C6128001D1803 /* DKDrawKit.framework */; };
 		553CF01D1FDD9AD8003E9342 /* DKDrawKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 763F8DC51A9C6128001D1803 /* DKDrawKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		553CF0241FDDC02C003E9342 /* BlankFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 553CF0231FDDC02C003E9342 /* BlankFile.m */; };
+		553CF03A1FDDC5AD003E9342 /* DrawKitSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 553CF0391FDDC5AD003E9342 /* DrawKitSwift.framework */; };
+		553CF03B1FDDC5AD003E9342 /* DrawKitSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 553CF0391FDDC5AD003E9342 /* DrawKitSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		763F8DCA1A9C6135001D1803 /* DKDrawKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763F8DC51A9C6128001D1803 /* DKDrawKit.framework */; };
 		763F8DCB1A9C6141001D1803 /* DKDrawKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 763F8DC51A9C6128001D1803 /* DKDrawKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
@@ -28,6 +31,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = DrawKit;
+		};
+		553CF0381FDDC5AD003E9342 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 763F8DBF1A9C6128001D1803 /* DrawKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 553CF02A1FDDC2EF003E9342;
+			remoteInfo = DrawKitSwift;
+		};
+		553CF03C1FDDC5AD003E9342 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 763F8DBF1A9C6128001D1803 /* DrawKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 553CF0291FDDC2EF003E9342;
+			remoteInfo = DrawKitSwift;
 		};
 		763F8DC41A9C6128001D1803 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -60,6 +77,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				553CF01D1FDD9AD8003E9342 /* DKDrawKit.framework in Embed Frameworks */,
+				553CF03B1FDDC5AD003E9342 /* DrawKitSwift.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -90,6 +108,9 @@
 		553CF00F1FDD991A003E9342 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		553CF0141FDD991A003E9342 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		553CF01A1FDD9949003E9342 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		553CF0211FDDC02C003E9342 /* DK Mini Swift Demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DK Mini Swift Demo-Bridging-Header.h"; sourceTree = "<group>"; };
+		553CF0221FDDC02C003E9342 /* BlankFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlankFile.h; sourceTree = "<group>"; };
+		553CF0231FDDC02C003E9342 /* BlankFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlankFile.m; sourceTree = "<group>"; };
 		763F8DBF1A9C6128001D1803 /* DrawKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DrawKit.xcodeproj; path = DrawKit/DrawKit.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* DK Mini Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DK Mini Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -104,6 +125,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				553CF01C1FDD9AD8003E9342 /* DKDrawKit.framework in Frameworks */,
+				553CF03A1FDDC5AD003E9342 /* DrawKitSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,6 +227,9 @@
 				553CF00D1FDD991A003E9342 /* AppDelegate.swift */,
 				553CF00F1FDD991A003E9342 /* Assets.xcassets */,
 				553CF0141FDD991A003E9342 /* Info.plist */,
+				553CF0221FDDC02C003E9342 /* BlankFile.h */,
+				553CF0231FDDC02C003E9342 /* BlankFile.m */,
+				553CF0211FDDC02C003E9342 /* DK Mini Swift Demo-Bridging-Header.h */,
 			);
 			path = "DK Mini Swift Demo";
 			sourceTree = "<group>";
@@ -214,6 +239,7 @@
 			children = (
 				763F8DC51A9C6128001D1803 /* DKDrawKit.framework */,
 				763F8DC71A9C6128001D1803 /* DKUnitTests.xctest */,
+				553CF0391FDDC5AD003E9342 /* DrawKitSwift.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -234,6 +260,7 @@
 			);
 			dependencies = (
 				553CF01F1FDD9AD8003E9342 /* PBXTargetDependency */,
+				553CF03D1FDDC5AD003E9342 /* PBXTargetDependency */,
 			);
 			name = "DK Mini Swift Demo";
 			productName = "DK Mini Swift Demo";
@@ -271,6 +298,7 @@
 				TargetAttributes = {
 					553CF00A1FDD991A003E9342 = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 0920;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -300,6 +328,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		553CF0391FDDC5AD003E9342 /* DrawKitSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DrawKitSwift.framework;
+			remoteRef = 553CF0381FDDC5AD003E9342 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		763F8DC51A9C6128001D1803 /* DKDrawKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -342,6 +377,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				553CF0241FDDC02C003E9342 /* BlankFile.m in Sources */,
 				553CF00E1FDD991A003E9342 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -362,6 +398,11 @@
 			isa = PBXTargetDependency;
 			name = DrawKit;
 			targetProxy = 553CF01E1FDD9AD8003E9342 /* PBXContainerItemProxy */;
+		};
+		553CF03D1FDDC5AD003E9342 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DrawKitSwift;
+			targetProxy = 553CF03C1FDDC5AD003E9342 /* PBXContainerItemProxy */;
 		};
 		763F8DC91A9C612F001D1803 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -393,6 +434,7 @@
 		553CF0161FDD991A003E9342 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -450,6 +492,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = "DK Mini Swift Demo/DK Mini Swift Demo-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 			};
@@ -458,6 +501,7 @@
 		553CF0171FDD991A003E9342 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -508,6 +552,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.github.maddthesane.DK-Mini-Swift-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "DK Mini Swift Demo/DK Mini Swift Demo-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 4.0;
 			};
@@ -545,6 +590,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/DrawKit/framework/Build/$(CONFIGURATION)/",
 				);
+				GCC_OPTIMIZATION_LEVEL = 0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
