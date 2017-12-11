@@ -10,7 +10,7 @@ import DKDrawKit
 import DrawKitSwift
 
 @NSApplicationMain
-class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSource, NSTableViewDelegate {
+class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSource, NSTableViewDelegate, NSWindowDelegate {
 
 	// TOOLS
 	/// matrix of buttons for selecting the drawing tool
@@ -50,10 +50,6 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	/// outlet to the main DKDrawingView that displays the content (and owns the drawing)
 	@IBOutlet weak var drawingView: DKDrawingView!
 
-	func applicationDidFinishLaunching(_ aNotification: Notification) {
-		// Insert code here to initialize your application
-	}
-
 	func applicationWillTerminate(_ aNotification: Notification) {
 		// Insert code here to tear down your application
 	}
@@ -74,22 +70,40 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	
 	
 	// STYLES
-	@IBAction func styleFillColourAction(_ sender: Any?) {
+	@IBAction func styleFillColourAction(_ sender: NSColorWell?) {
 		// get the style of the selected object
 		
-		//let style =
-		//DKStyle* style = [self styleOfSelectedObject];
-		//[style setFillColour:[sender color]];
-		//[[mDrawingView undoManager] setActionName:@"Change Fill Colour"];
+		let style = styleOfSelectedObject
+		style?.fillColour = sender?.color
+		drawingView.undoManager?.setActionName("Change Fill Colour")
 
 	}
 	
-	@IBAction func styleStrokeColourAction(_ sender: Any?) {
+	@IBAction func styleStrokeColourAction(_ sender: NSColorWell?) {
+		// get the style of the selected object
 		
+		let style = styleOfSelectedObject
+		style?.strokeColour = sender?.color
+		drawingView.undoManager?.setActionName("Change Stroke Colour")
 	}
 	
-	@IBAction func styleStrokeWidthAction(_ sender: Any?) {
+	@IBAction func styleStrokeWidthAction(_ sender: AnyObject?) {
+		// get the style of the selected object
 		
+		guard let style = styleOfSelectedObject, let sendFloat = sender?.floatValue else {
+			return
+		}
+		style.strokeWidth = CGFloat(sendFloat)
+		
+		// synchronise the text field and the stepper so they both have the same value
+		
+		if sender === styleStrokeWidthStepper {
+			styleStrokeWidthTextField.floatValue = sendFloat
+		} else {
+			styleStrokeWidthStepper.floatValue = sendFloat
+		}
+		
+		drawingView.undoManager?.setActionName("Change Stroke Width")
 	}
 	
 	@IBAction func styleFillCheckboxAction(_ sender: Any?) {
@@ -124,36 +138,6 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	
 
 /*
-- (IBAction)	toolMatrixAction:(id) sender
-{
-// the drawing view can handle this for us, provided we pass it an object that responds to -title and returns
-// the valid name of a registered tool. The selected button cell is just such an object.
-
-NSButtonCell* cell = [sender selectedCell];
-[mDrawingView selectDrawingToolByName:cell];
-}
-
-
-- (IBAction)	toolStickyAction:(id) sender
-{
-// sets the tool controller's flag to the inverted state of the checkbox
-
-[(DKToolController*)[mDrawingView controller] setAutomaticallyRevertsToSelectionTool:![sender intValue]];
-}
-
-
-#pragma mark -
-
-- (IBAction)	styleFillColourAction:(id) sender
-{
-// get the style of the selected object
-
-DKStyle* style = [self styleOfSelectedObject];
-[style setFillColour:[sender color]];
-[[mDrawingView undoManager] setActionName:@"Change Fill Colour"];
-}
-
-
 
 
 - (IBAction)	styleStrokeColourAction:(id) sender
@@ -445,7 +429,7 @@ sw = 1.0;
 			// get the selected objects and use the style of the last object, corresponding to the
 			// one drawn last, or on top of all the others.
 
-			if let selectedObjects = activeLayer.selectedAvailableObjects(), selectedObjects.count != 0 {
+			if let selectedObjects = activeLayer.selectedAvailableObjects, selectedObjects.count != 0 {
 				selectedStyle = selectedObjects.last!.style
 				
 				// ensure it can be edited
@@ -457,19 +441,17 @@ sw = 1.0;
 		return selectedStyle
 	}
 	
-	/*
+	// MARK: - as a NSWindowController
+	override func awakeFromNib() {
+		super.awakeFromNib()
+		
+		// make sure the view has a drawing object initialised. While the view itself would do this for us later, we tip its hand now so that we definitely
+		// have a valid DKDrawing object available for setting up the notifications and user interface. In this case we are simply allowing the view to
+		// create and own the drawing, rather than owning it here - though that would also be a perfectly valid way to do things.
 
-#pragma mark -
-#pragma mark - as a NSWindowController
-
-- (void)		awakeFromNib
-{
-// make sure the view has a drawing object initialised. While the view itself would do this for us later, we tip its hand now so that we definitely
-// have a valid DKDrawing object available for setting up the notifications and user interface. In this case we are simply allowing the view to
-// create and own the drawing, rather than owning it here - though that would also be a perfectly valid way to do things.
-
-[mDrawingView createAutomaticDrawing];
-
+		drawingView.createAutomaticDrawing()
+		
+		/*
 // subscribe to selection, layer and tool change notifications so that we can update the UI when these change
 
 
@@ -503,120 +485,101 @@ object:nil];
 
 [self activeLayerDidChange:nil];
 [[mDrawingView window] makeFirstResponder:mDrawingView];
-}
-
-
-
-#pragma mark -
-#pragma mark - as the TableView dataSource
 */
+	}
+	
 	// MARK: - as the TableView dataSource
 	
 	func numberOfRows(in tableView: NSTableView) -> Int {
-		return Int(drawingView.drawing.countOfLayers)
+		guard let layerCount = drawingView.drawing?.countOfLayers else {
+			return 0
+		}
+		return Int(layerCount)
 	}
 	
 	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-		let layer = drawingView.drawing.layers[row]
+		guard let layer = drawingView.drawing?.layers[row] else {
+			return nil
+		}
 		if let columnName = tableColumn?.identifier.rawValue {
 			return layer.value(forKey: columnName)
 		}
 		
 		return nil
 	}
-	/*
+	
+	func tableView(_ tableView: NSTableView, setObjectValue object: Any?, for tableColumn: NSTableColumn?, row: Int) {
+		guard let layer = drawingView.drawing?.layers[row],
+			let columnName = tableColumn?.identifier.rawValue else {
+			return
+		}
 
-- (void)		tableView:(NSTableView *)aTableView
-setObjectValue:anObject
-forTableColumn:(NSTableColumn *)aTableColumn
-row:(int)rowIndex
-{
-DKLayer* layer = [[[mDrawingView drawing] layers] objectAtIndex:rowIndex];
-[layer setValue:anObject forKey:[aTableColumn identifier]];
+		layer.setValue(object, forKey: columnName)
+	}
+	
+	// MARK: - as the TableView delegate
+	
+	func tableViewSelectionDidChange(_ notification: Notification) {
+		// when the user selects a different layer in the table, change the real active layer to match.
+		guard (notification.object as AnyObject?) === layerTable else {
+			return
+		}
+		let row = layerTable.selectedRow
+		if row != -1 {
+			drawingView.drawing.setActiveLayer(drawingView.drawing.objectInLayers(at: UInt(row)))
+		}
+	}
+	
+	// MARK: - as the NSApplication delegate
+	func applicationDidFinishLaunching(_ aNotification: Notification) {
+		// app ready to go - first turn off all style sharing. For this simple demo this makes life a bit easier.
+		// (note - comment out this line and see what happens. It's perfectly safe ;-)
+		
+		DKStyle.stylesAreSharableByDefault = false
+		
+		// set up an initial style to apply to all new objects created. Because sharin gis off above, this style is copied
+		// for each new object created, so each has its own individual style which can be edited independently.
+		
+		let ds = DKStyle(fillColour: NSColor.systemOrange, strokeColour: NSColor.black, strokeWidth: 2.0)
+		ds?.name = "Demo Style"
+		
+		DKObjectCreationTool.styleForCreatedObjects = ds
+		
+		// register the default set of tools (Select, Rectangle, Oval, etc)
+		
+		DKDrawingTool.registerStandardTools()
+	}
+	
+	@IBAction func saveDocumentAs(_ sender: Any?) {
+		let sp = NSSavePanel()
+		
+		sp.allowedFileTypes = [kUTTypePDF as String]
+		sp.canSelectHiddenExtension = true
+		sp.nameFieldStringValue = window!.title
+		
+		sp.beginSheetModal(for: window!) { (returnCode) in
+			guard returnCode == .OK else {
+				return
+			}
+			let pdf = self.drawingView.drawing.pdf()
+			do {
+			try pdf?.write(to: sp.url!)
+			} catch {
+				
+			}
+		}
+	}
+	
+	// MARK: - as the Window delegate
+	
+	func windowWillReturnUndoManager(_ window: NSWindow) -> UndoManager? {
+		// DK's own implementation of the undo manager is generally more functional than the default Cocoa one, especially
+		// for interactive drawing as it implements task coalescing.
+		struct Um {
+			static let um = DKUndoManager()
+		}
+		
+		// ugly icky hack.
+		return unsafeBitCast(Um.um, to: UndoManager.self)
+	}
 }
-
-#pragma mark -
-#pragma mark - as the TableView delegate
-
-- (void)				tableViewSelectionDidChange:(NSNotification*) aNotification
-{
-// when the user selects a different layer in the table, change the real active layer to match.
-
-if ([aNotification object] == mLayerTable)
-{
-int row = [mLayerTable selectedRow];
-
-if ( row != -1 )
-[[mDrawingView drawing] setActiveLayer:[[mDrawingView drawing] objectInLayersAtIndex:row]];
-}
-}
-
-
-#pragma mark -
-#pragma mark - as the NSApplication delegate
-
-- (void)		applicationDidFinishLaunching:(NSNotification*) aNotification
-{
-// app ready to go - first turn off all style sharing. For this simple demo this makes life a bit easier.
-// (note - comment out this line and see what happens. It's perfectly safe ;-)
-
-[DKStyle setStylesAreSharableByDefault:NO];
-
-// set up an initial style to apply to all new objects created. Because sharin gis off above, this style is copied
-// for each new object created, so each has its own individual style which can be edited independently.
-
-DKStyle* ds = [DKStyle styleWithFillColour:[NSColor orangeColor] strokeColour:[NSColor blackColor] strokeWidth:2.0];
-[ds setName:@"Demo Style"];
-
-[DKObjectCreationTool setStyleForCreatedObjects:ds];
-
-// register the default set of tools (Select, Rectangle, Oval, etc)
-
-[DKDrawingTool registerStandardTools];
-}
-
-
-- (IBAction)	saveDocumentAs:(id) sender
-{
-NSSavePanel* sp = [NSSavePanel savePanel];
-
-[sp setRequiredFileType:@"pdf"];
-[sp setCanSelectHiddenExtension:YES];
-
-[sp beginSheetForDirectory:nil
-file:[[self window] title]
-modalForWindow:[self window]
-modalDelegate:self
-didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:)
-contextInfo:NULL];
-}
-
-
-- (void)		savePanelDidEnd:(NSSavePanel*) panel returnCode:(int) returnCode contextInfo:(void*) contextInfo
-{
-if( returnCode == NSOKButton )
-{
-NSData* pdf = [[mDrawingView drawing] pdf];
-[pdf writeToURL:[panel URL] atomically:YES];
-}
-}
-
-
-#pragma mark -
-#pragma mark - as the Window delegate
-
-- (NSUndoManager*) windowWillReturnUndoManager:(NSWindow*) window
-{
-// DK's own implementation of the undo manager is generally more functional than the default Cocoa one, especially
-// for interactive drawing as it implements task coalescing.
-
-static DKUndoManager* um = nil;
-
-if( um == nil )
-um = [[DKUndoManager alloc] init];
-
-return (NSUndoManager*)um;
-}
-*/
-}
-
