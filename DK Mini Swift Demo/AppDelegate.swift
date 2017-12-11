@@ -7,18 +7,19 @@
 
 import Cocoa
 import DKDrawKit
+import DKDrawKit.DKGridLayer
 import DrawKitSwift
 
 @NSApplicationMain
 class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSource, NSTableViewDelegate, NSWindowDelegate {
 
-	// TOOLS
+	// MARK: - TOOLS
 	/// matrix of buttons for selecting the drawing tool
 	@IBOutlet weak var toolMatrix: NSMatrix!
 	/// checkbox for setting "sticky" state of tools
 	@IBOutlet weak var toolStickyCheckbox: NSButton!
 
-	// STYLE
+	// MARK: - STYLE
 	/// checkbox for enabling the "fill" property
 	@IBOutlet weak var styleFillCheckbox: NSButton!
 	/// colour well for the fill's colour
@@ -32,13 +33,13 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	/// stepper buttons for the stroke's width
 	@IBOutlet weak var styleStrokeWidthStepper: NSStepper!
 	
-	// GRID
+	// MARK: - GRID
 	/// matrix of buttons for selecting the grid to use
 	@IBOutlet weak var gridMatrix: NSMatrix!
 	/// checkbox to enable "snap to grid"
 	@IBOutlet weak var gridSnapCheckbox: NSButton!
 
-	// LAYERS
+	// MARK: - LAYERS
 	/// table view for listing the drawing's layers
 	@IBOutlet weak var layerTable: NSTableView!
 	/// button for adding a new layer
@@ -46,7 +47,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	/// button for removing the active (selected) layer
 	@IBOutlet weak var layerRemoveButton: NSButton!
 
-	// MAIN VIEW
+	// MARK: - MAIN VIEW
 	/// outlet to the main DKDrawingView that displays the content (and owns the drawing)
 	@IBOutlet weak var drawingView: DKDrawingView!
 
@@ -54,7 +55,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		// Insert code here to tear down your application
 	}
 
-	// TOOLS
+	// MARK: - TOOLS
 	/// the drawing view can handle this for us, provided we pass it an object that responds to `-title` and returns
 	/// the valid name of a registered tool. The selected button cell is just such an object.
 	@IBAction func toolMatrixAction(_ sender: NSMatrix?) {
@@ -69,7 +70,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	}
 	
 	
-	// STYLES
+	// MARK: - STYLES
 	@IBAction func styleFillColourAction(_ sender: NSColorWell?) {
 		// get the style of the selected object
 		
@@ -106,174 +107,91 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		drawingView.undoManager?.setActionName("Change Stroke Width")
 	}
 	
-	@IBAction func styleFillCheckboxAction(_ sender: Any?) {
+	@IBAction func styleFillCheckboxAction(_ sender: AnyObject?) {
+		// get the style of the selected object
 		
+		let style = styleOfSelectedObject
+		
+		let removing: Bool = sender?.intValue == 0
+		
+		if removing {
+			style?.fillColour = nil
+			drawingView.undoManager?.setActionName("Delete Fill")
+		} else {
+			style?.fillColour = styleFillColourWell.color
+			drawingView.undoManager?.setActionName("Add Fill")
+		}
 	}
 	
-	@IBAction func styleStrokeCheckboxAction(_ sender: Any?) {
+	@IBAction func styleStrokeCheckboxAction(_ sender: AnyObject?) {
+		// get the style of the selected object
 		
+		let style = styleOfSelectedObject
+
+		let removing: Bool = sender?.intValue == 0
+
+		if removing {
+			style?.strokeColour = nil
+			drawingView.undoManager?.setActionName("Delete Stroke")
+		} else {
+			style?.strokeColour = styleStrokeColourWell.color
+			drawingView.undoManager?.setActionName("Add Stroke")
+		}
 	}
 	
 	
-	// GRID
-	@IBAction func gridMatrixAction(_ sender: Any?) {
+	// MARK: - GRID
+	@IBAction func gridMatrixAction(_ sender: AnyObject?) {
+		// the drawing's grid layer already knows how to do this - just pass it the selected cell from where it
+		// can extract the tag which it interprets as one of the standard grids.
 		
+		drawingView.drawing.gridLayer.setMeasurementSystemAction(sender?.selectedCell())
 	}
 	
-	@IBAction func snapToGridAction(_ sender: Any?) {
+	@IBAction func snapToGridAction(_ sender: AnyObject?) {
+		// set the drawing's snapToGrid flag to match the sender's state
 		
+		drawingView.drawing.snapsToGrid = sender?.intValue != 0
 	}
 	
 	
-	// LAYERS
+	// MARK: - LAYERS
 	@IBAction func layerAddButtonAction(_ sender: Any?) {
+		// adding a new layer - first create it
+
+		let newLayer = DKObjectDrawingLayer()
 		
+		// add it to the drawing and make it active - this triggers notifications which update the UI
+
+		drawingView.drawing.addLayer(newLayer, andActivateIt: true)
+		
+		// drawing now owns the layer so we can release it
+		
+		//[newLayer release];
+		
+		// inform the Undo Manager what we just did:
+
+		drawingView.undoManager?.setActionName("New Drawing Layer")
 	}
 	
 	@IBAction func layerRemoveButtonAction(_ sender: Any?) {
+		// removing the active (selected) layer - first find that layer
 		
+		let activeLayer = drawingView.drawing.activeLayer
+		
+		// remove it and activate another (passing nil tells the drawing to use its nous to activate something sensible)
+
+		drawingView.drawing.removeLayer(activeLayer, andActivate: nil)
+		
+		// inform the Undo Manager what we just did:
+
+		drawingView.undoManager?.setActionName("Delete Drawing Layer")
 	}
 	
-	
+	// MARK: -
 	
 
 /*
-
-
-- (IBAction)	styleStrokeColourAction:(id) sender
-{
-// get the style of the selected object
-
-DKStyle* style = [self styleOfSelectedObject];
-[style setStrokeColour:[sender color]];
-[[mDrawingView undoManager] setActionName:@"Change Stroke Colour"];
-}
-
-
-
-
-- (IBAction)	styleStrokeWidthAction:(id) sender
-{
-// get the style of the selected object
-
-DKStyle* style = [self styleOfSelectedObject];
-[style setStrokeWidth:[sender floatValue]];
-
-// synchronise the text field and the stepper so they both have the same value
-
-if( sender == mStyleStrokeWidthStepper )
-[mStyleStrokeWidthTextField setFloatValue:[sender floatValue]];
-else
-[mStyleStrokeWidthStepper setFloatValue:[sender floatValue]];
-
-[[mDrawingView undoManager] setActionName:@"Change Stroke Width"];
-}
-
-
-- (IBAction)	styleFillCheckboxAction:(id) sender
-{
-// get the style of the selected object
-
-DKStyle* style = [self styleOfSelectedObject];
-
-BOOL removing = ([sender intValue] == 0);
-
-if ( removing )
-{
-[style setFillColour:nil];
-[[mDrawingView undoManager] setActionName:@"Delete Fill"];
-}
-else
-{
-[style setFillColour:[mStyleFillColourWell color]];
-[[mDrawingView undoManager] setActionName:@"Add Fill"];
-}
-}
-
-
-- (IBAction)	styleStrokeCheckboxAction:(id) sender
-{
-// get the style of the selected object
-
-DKStyle* style = [self styleOfSelectedObject];
-
-BOOL removing = ([sender intValue] == 0);
-
-if ( removing )
-{
-[style setStrokeColour:nil];
-[[mDrawingView undoManager] setActionName:@"Delete Stroke"];
-}
-else
-{
-[style setStrokeColour:[mStyleStrokeColourWell color]];
-[[mDrawingView undoManager] setActionName:@"Add Stroke"];
-}
-}
-
-
-#pragma mark -
-
-- (IBAction)	gridMatrixAction:(id) sender
-{
-// the drawing's grid layer already knows how to do this - just pass it the selected cell from where it
-// can extract the tag which it interprets as one of the standard grids.
-
-[[[mDrawingView drawing] gridLayer] setMeasurementSystemAction:[sender selectedCell]];
-}
-
-
-- (IBAction)	snapToGridAction:(id) sender
-{
-// set the drawing's snapToGrid flag to match the sender's state
-
-[[mDrawingView drawing] setSnapsToGrid:[sender intValue]];
-}
-
-
-#pragma mark -
-
-- (IBAction)	layerAddButtonAction:(id) sender
-{
-// adding a new layer - first create it
-
-DKObjectDrawingLayer* newLayer = [[DKObjectDrawingLayer alloc] init];
-
-// add it to the drawing and make it active - this triggers notifications which update the UI
-
-[[mDrawingView drawing] addLayer:newLayer andActivateIt:YES];
-
-// drawing now owns the layer so we can release it
-
-[newLayer release];
-
-// inform the Undo Manager what we just did:
-
-[[mDrawingView undoManager] setActionName:@"New Drawing Layer"];
-}
-
-
-
-
-- (IBAction)	layerRemoveButtonAction:(id) sender
-{
-// removing the active (selected) layer - first find that layer
-
-DKLayer* activeLayer = [[mDrawingView drawing] activeLayer];
-
-// remove it and activate another (passing nil tells the drawing to use its nous to activate something sensible)
-
-[[mDrawingView drawing] removeLayer:activeLayer andActivateLayer:nil];
-
-// inform the Undo Manager what we just did:
-
-[[mDrawingView undoManager] setActionName:@"Delete Drawing Layer"];
-}
-
-
-#pragma mark -
-
-
 
 - (void)		drawingSelectionDidChange:(NSNotification*) note
 {
@@ -356,7 +274,9 @@ return;
 [mToolMatrix selectCellAtRow:0 column:0];
 }
 
-
+*/
+	// MARK: -
+	/*
 #pragma mark -
 
 - (void)		updateControlsForSelection:(NSArray*) selection
@@ -451,9 +371,9 @@ sw = 1.0;
 
 		drawingView.createAutomaticDrawing()
 		
-		/*
-// subscribe to selection, layer and tool change notifications so that we can update the UI when these change
+		// subscribe to selection, layer and tool change notifications so that we can update the UI when these change
 
+		/*
 
 [[NSNotificationCenter defaultCenter]	addObserver:self
 selector:@selector(drawingSelectionDidChange:)
