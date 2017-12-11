@@ -190,155 +190,122 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	
 	// MARK: -
 	
+	@objc private func drawingSelectionDidChange(_ note: Notification) {
+		// the selection changed within the drawing - update the UI to match the state of whatever was selected. We pass nil
+		// because in fact we just grab the current selection directly.
 
-/*
+		updateControlsForSelection(nil)
+	}
+	
+	@objc private func activeLayerDidChange(_ note: Notification?) {
+		// change the selection in the layer table to match the actual layer that has been activated
+		
+		if let dwg = drawingView.drawing {
+			// now find the active layer's index and set the selection to the same value
+			let index = dwg.index(of: dwg.activeLayer)
+			if index != NSNotFound {
+				layerTable.selectRowIndexes(IndexSet(integer: Int(index)), byExtendingSelection: false)
+			}
+		}
+	}
+	
+	@objc private func numberOfLayersChanged(_ note: Notification) {
+		// update the table to match the number of layers in the drawing
 
-- (void)		drawingSelectionDidChange:(NSNotification*) note
-{
-// the selection changed within the drawing - update the UI to match the state of whatever was selected. We pass nil
-// because in fact we just grab the current selection directly.
+		layerTable.reloadData()
+		
+		// re-establish the correct selection - requires a small delay so that the table is fully reloaded before the
+		// selection is changed to avoid a potential out of range exception.
 
-[self updateControlsForSelection:nil];
-}
+		DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.microseconds(1)) {
+			self.activeLayerDidChange(nil)
+		}
+	}
+	
+	@objc private func selectedToolDidChange(_ note: Notification) {
+		// the selected tool changed - find out which button cell matches and select it so that
+		// the tool UI and the actual selected tool agree. This is necessary because when a tool is automatically
+		// "sprung back" the UI needs to keep up with that automatic change.
+		
+		// which tool was selected?
+		
+		let tool = (note.object as? DKToolController)?.drawingTool
+		let toolName = tool?.registeredName
+		
+		// keep the "sticky" checkbox synchronised with the tool controller's actual state
+		
+		let sticky = (drawingView.controller as! DKToolController).automaticallyRevertsToSelectionTool
+		toolStickyCheckbox.state = sticky ? .on : .off
+		
+		// search through the matrix to find the cell whose title matches the tool's name,
+		// and select it.
 
-
-- (void)		activeLayerDidChange:(NSNotification*) note
-{
-// change the selection in the layer table to match the actual layer that has been activated
-
-DKDrawing* dwg = [mDrawingView drawing];
-
-if( dwg != nil )
-{
-// now find the active layer's index and set the selection to the same value
-
-unsigned index = [dwg indexOfLayer:[dwg activeLayer]];
-
-if( index != NSNotFound )
-[mLayerTable selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
-}
-}
-
-
-- (void)		numberOfLayersChanged:(NSNotification*) note
-{
-// update the table to match the number of layers in the drawing
-
-[mLayerTable reloadData];
-
-// re-establish the correct selection - requires a small delay so that the table is fully reloaded before the
-// selection is changed to avoid a potential out of range exception.
-
-[self performSelector:@selector(activeLayerDidChange:) withObject:nil afterDelay:0.0];
-}
-
-
-- (void)		selectedToolDidChange:(NSNotification*) note
-{
-// the selected tool changed - find out which button cell matches and select it so that
-// the tool UI and the actual selected tool agree. This is necessary because when a tool is automatically
-// "sprung back" the UI needs to keep up with that automatic change.
-
-// which tool was selected?
-
-DKDrawingTool*	tool = [[note object] drawingTool];
-NSString*		toolName = [tool registeredName];
-
-// keep the "sticky" checkbox synchronised with the tool controller's actual state
-
-BOOL sticky = ![(DKToolController*)[mDrawingView controller] automaticallyRevertsToSelectionTool];
-[mToolStickyCheckbox setIntValue:sticky];
-
-// search through the matrix to find the cell whose title matches the tool's name,
-// and select it.
-
-NSInteger		row, col, rr, cc;
-NSCell*			cell;
-
-[mToolMatrix getNumberOfRows:&row columns:&col];
-
-for( rr = 0; rr < row; ++rr )
-{
-for( cc = 0; cc < col; ++cc )
-{
-cell = [mToolMatrix cellAtRow:rr column:cc];
-
-if([[cell title] isEqualToString:toolName])
-{
-[mToolMatrix selectCellAtRow:rr column:cc];
-return;
-}
-}
-}
-
-[mToolMatrix selectCellAtRow:0 column:0];
-}
-
-*/
+		var row = 0
+		var col = 0
+		
+		toolMatrix.getNumberOfRows(&row, columns: &col)
+		
+		for rr in 0..<row {
+			for cc in 0 ..< col {
+				if let cell = toolMatrix.cell(atRow: rr, column: cc), cell.title == toolName {
+					toolMatrix.selectCell(atRow: rr, column: cc)
+					return
+				}
+			}
+		}
+		
+		toolMatrix.selectCell(atRow: 0, column: 0)
+	}
+	
 	// MARK: -
-	/*
-#pragma mark -
+	
+	func updateControlsForSelection(_ selection: [Any]?) {
+		// update all necessary UI controls to match the state of the selected object. Note that this ignores the selection passed to it
+		// and just gets the info directly. It also doesn't bother to worry about more than one selected object - it just uses the info from
+		// the topmost object - for this simple demo that's sufficient.
+		
+		// get the selected object's style
 
-- (void)		updateControlsForSelection:(NSArray*) selection
-{
-// update all necessary UI controls to match the state of the selected object. Note that this ignores the selection passed to it
-// and just gets the info directly. It also doesn't bother to worry about more than one selected object - it just uses the info from
-// the topmost object - for this simple demo that's sufficient.
+		guard let style = styleOfSelectedObject else {
+			return
+		}
+		var temp: NSColor?
+		
+		// set up the fill controls if the style has a fill property, or disable them
+		// altogether if it does not.
 
-// get the selected object's style
-
-DKStyle*		style = [self styleOfSelectedObject];
-DKRasterizer*	rast;
-NSColor*		temp;
-float			sw;
-
-// set up the fill controls if the style has a fill property, or disable them
-// altogether if it does not.
-
-if([style hasFill])
-{
-rast = [[style renderersOfClass:[DKFill class]] lastObject];
-temp = [(DKFill*)rast colour];
-[mStyleFillColourWell setEnabled:YES];
-[mStyleFillCheckbox setIntValue:YES];
-}
-else
-{
-temp = [NSColor whiteColor];
-[mStyleFillColourWell setEnabled:NO];
-[mStyleFillCheckbox setIntValue:NO];
-}
-[mStyleFillColourWell setColor:temp];
-
-// set up the stroke controls if the style has a stroke property, or disable them
-// altogether if it does not.
-
-if([style hasStroke])
-{
-rast = [[style renderersOfClass:[DKStroke class]] lastObject];
-temp = [(DKStroke*)rast colour];
-sw = [(DKStroke*)rast width];
-[mStyleStrokeColourWell setEnabled:YES];
-[mStyleStrokeWidthStepper setEnabled:YES];
-[mStyleStrokeWidthTextField setEnabled:YES];
-[mStyleStrokeCheckbox setIntValue:YES];
-}
-else
-{
-temp = [NSColor whiteColor];
-sw = 1.0;
-[mStyleStrokeColourWell setEnabled:NO];
-[mStyleStrokeWidthStepper setEnabled:NO];
-[mStyleStrokeWidthTextField setEnabled:NO];
-[mStyleStrokeCheckbox setIntValue:NO];
-}
-
-[mStyleStrokeColourWell setColor:temp];
-[mStyleStrokeWidthStepper setFloatValue:sw];
-[mStyleStrokeWidthTextField setFloatValue:sw];
-}
-
-	*/
+		if style.hasFill {
+			let rast = style.renderers(of: DKFill.self)!.last!
+			temp = rast.colour
+			styleFillColourWell.isEnabled = true
+			styleFillCheckbox.state = .on
+		} else {
+			temp = NSColor.white
+			styleFillColourWell.isEnabled = false
+			styleFillCheckbox.state = .off
+		}
+		styleFillColourWell.color = temp ?? .white
+		
+		let sw: CGFloat
+		if let rast = style.renderers(of: DKStroke.self)?.last {
+			temp = rast.colour
+			sw = rast.width
+			styleStrokeColourWell.isEnabled = true
+			styleStrokeWidthStepper.isEnabled = true
+			styleStrokeWidthTextField.isEnabled = true
+			styleStrokeCheckbox.state = .on
+		} else {
+			temp = NSColor.white
+			sw = 1
+			styleStrokeColourWell.isEnabled = false
+			styleStrokeWidthStepper.isEnabled = false
+			styleStrokeWidthTextField.isEnabled = false
+			styleStrokeCheckbox.state = .off
+		}
+		styleStrokeColourWell.color = temp ?? .white
+		styleStrokeWidthTextField.objectValue = sw
+		styleStrokeWidthTextField.objectValue = sw
+	}
 	
 	/// returns the style of the topmost selected object in the active layer, or `nil` if there is nothing selected.
 	private var styleOfSelectedObject: DKStyle? {
@@ -357,7 +324,6 @@ sw = 1.0;
 			}
 		}
 		
-		
 		return selectedStyle
 	}
 	
@@ -373,39 +339,17 @@ sw = 1.0;
 		
 		// subscribe to selection, layer and tool change notifications so that we can update the UI when these change
 
-		/*
+		NotificationCenter.default.addObserver(self, selector: #selector(AppDelegate.drawingSelectionDidChange(_:)), name: .dkLayerSelectionDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(AppDelegate.drawingSelectionDidChange(_:)), name: .dkStyleDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(AppDelegate.activeLayerDidChange(_:)), name: .dkDrawingActiveLayerDidChange, object: drawingView.drawing)
+		NotificationCenter.default.addObserver(self, selector: #selector(AppDelegate.numberOfLayersChanged(_:)), name: .dkLayerGroupNumberOfLayersDidChange, object: drawingView.drawing)
+		NotificationCenter.default.addObserver(self, selector: #selector(AppDelegate.selectedToolDidChange(_:)), name: .dkDidChangeTool, object: drawingView.drawing)
 
-[[NSNotificationCenter defaultCenter]	addObserver:self
-selector:@selector(drawingSelectionDidChange:)
-name:kDKLayerSelectionDidChange
-object:nil];
+		// creating the drawing set up the initial active layer but we weren't ready to listen to that notification. So that we can set
+		// up the user-interface correctly this first time, just call the responder method directly now.
 
-[[NSNotificationCenter defaultCenter]	addObserver:self
-selector:@selector(drawingSelectionDidChange:)
-name:kDKStyleDidChangeNotification
-object:nil];
-
-[[NSNotificationCenter defaultCenter]	addObserver:self
-selector:@selector(activeLayerDidChange:)
-name:kDKDrawingActiveLayerDidChange
-object:[mDrawingView drawing]];
-
-[[NSNotificationCenter defaultCenter]	addObserver:self
-selector:@selector(numberOfLayersChanged:)
-name:kDKLayerGroupNumberOfLayersDidChange
-object:[mDrawingView drawing]];
-
-[[NSNotificationCenter defaultCenter]	addObserver:self
-selector:@selector(selectedToolDidChange:)
-name:kDKDidChangeToolNotification
-object:nil];
-
-// creating the drawing set up the initial active layer but we weren't ready to listen to that notification. So that we can set
-// up the user-interface correctly this first time, just call the responder method directly now.
-
-[self activeLayerDidChange:nil];
-[[mDrawingView window] makeFirstResponder:mDrawingView];
-*/
+		activeLayerDidChange(nil)
+		drawingView.window?.makeFirstResponder(drawingView)
 	}
 	
 	// MARK: - as the TableView dataSource
