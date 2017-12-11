@@ -77,7 +77,6 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		let style = styleOfSelectedObject
 		style?.fillColour = sender?.color
 		drawingView.undoManager?.setActionName("Change Fill Colour")
-
 	}
 	
 	@IBAction func styleStrokeColourAction(_ sender: NSColorWell?) {
@@ -267,6 +266,16 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		// get the selected object's style
 
 		guard let style = styleOfSelectedObject else {
+			styleFillColourWell.color = .white
+			styleStrokeColourWell.color = .white
+			styleStrokeWidthTextField.objectValue = 1
+			styleStrokeWidthStepper.objectValue = 1
+			styleFillColourWell.isEnabled = false
+			styleFillCheckbox.state = .off
+			styleStrokeColourWell.isEnabled = false
+			styleStrokeWidthStepper.isEnabled = false
+			styleStrokeWidthTextField.isEnabled = false
+			styleStrokeCheckbox.state = .off
 			return
 		}
 		var temp: NSColor?
@@ -274,8 +283,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		// set up the fill controls if the style has a fill property, or disable them
 		// altogether if it does not.
 
-		if style.hasFill {
-			let rast = style.renderers(of: DKFill.self)!.last!
+		if let rast = style.renderers(of: DKFill.self)?.last {
 			temp = rast.colour
 			styleFillColourWell.isEnabled = true
 			styleFillCheckbox.state = .on
@@ -304,7 +312,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		}
 		styleStrokeColourWell.color = temp ?? .white
 		styleStrokeWidthTextField.objectValue = sw
-		styleStrokeWidthTextField.objectValue = sw
+		styleStrokeWidthStepper.objectValue = sw
 	}
 	
 	/// returns the style of the topmost selected object in the active layer, or `nil` if there is nothing selected.
