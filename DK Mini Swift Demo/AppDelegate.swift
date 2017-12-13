@@ -422,7 +422,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		
 		// register the default set of tools (Select, Rectangle, Oval, etc)
 		
-		DKDrawingTool.registerStandardTools()
+		DKDrawingTool.loadDefaults()
 	}
 	
 	@IBAction func saveDocumentAs(_ sender: Any?) {
