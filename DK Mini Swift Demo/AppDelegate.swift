@@ -8,6 +8,9 @@
 import Cocoa
 import DKDrawKit
 import DKDrawKit.DKGridLayer
+import DKDrawKit.DKDrawingView
+import DKDrawKit.DKDrawingTool
+import DKDrawKit.DKDrawingToolProtocol
 import DrawKitSwift
 
 @NSApplicationMain
@@ -246,7 +249,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		
 		for rr in 0..<row {
 			for cc in 0 ..< col {
-				if let cell = toolMatrix.cell(atRow: rr, column: cc), cell.title == toolName {
+				if let cell = toolMatrix.cell(atRow: rr, column: cc), cell.title == toolName?.rawValue {
 					toolMatrix.selectCell(atRow: rr, column: cc)
 					return
 				}
