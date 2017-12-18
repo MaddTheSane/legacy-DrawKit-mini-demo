@@ -525,8 +525,8 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		// set up an initial style to apply to all new objects created. Because sharin gis off above, this style is copied
 		// for each new object created, so each has its own individual style which can be edited independently.
 		
-		let ds = DKStyle(fillColour: NSColor.systemOrange, strokeColour: NSColor.black, strokeWidth: 2.0)
-		ds?.name = "Demo Style"
+		let ds = DKStyle(fillColour: NSColor.orange, strokeColour: NSColor.black, strokeWidth: 2.0)
+		ds.name = "Demo Style"
 		
 		DKObjectCreationTool.styleForCreatedObjects = ds
 		
@@ -548,7 +548,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 			}
 			let pdf = self.drawingView.drawing.pdf()
 			do {
-			try pdf?.write(to: sp.url!)
+				try pdf?.write(to: sp.url!)
 			} catch {
 				
 			}
