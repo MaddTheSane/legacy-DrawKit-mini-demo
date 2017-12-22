@@ -257,7 +257,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		// the drawing's grid layer already knows how to do this - just pass it the selected cell from where it
 		// can extract the tag which it interprets as one of the standard grids.
 		
-		drawingView.drawing.gridLayer.setMeasurementSystemAction(sender?.selectedCell())
+		drawingView.drawing.gridLayer?.setMeasurementSystemAction(sender?.selectedCell())
 	}
 	
 	@IBAction func snapToGridAction(_ sender: AnyObject?) {
@@ -271,7 +271,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	@IBAction func layerAddButtonAction(_ sender: Any?) {
 		// adding a new layer - first create it
 
-		let newLayer = DKObjectDrawingLayer()
+		let newLayer = DKObjectDrawingLayer()!
 		
 		// add it to the drawing and make it active - this triggers notifications which update the UI
 
@@ -293,7 +293,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		
 		// remove it and activate another (passing nil tells the drawing to use its nous to activate something sensible)
 
-		drawingView.drawing.removeLayer(activeLayer, andActivate: nil)
+		drawingView.drawing.removeLayer(activeLayer!, andActivate: nil)
 		
 		// inform the Undo Manager what we just did:
 
@@ -312,9 +312,9 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	@objc private func activeLayerDidChange(_ note: Notification?) {
 		// change the selection in the layer table to match the actual layer that has been activated
 		
-		if let dwg = drawingView.drawing {
+		if let dwg = drawingView.drawing, let activeLayer = dwg.activeLayer {
 			// now find the active layer's index and set the selection to the same value
-			let index = dwg.index(of: dwg.activeLayer)
+			let index = dwg.index(of: activeLayer)
 			if index != NSNotFound {
 				layerTable.selectRowIndexes(IndexSet(integer: Int(index)), byExtendingSelection: false)
 			}
@@ -548,7 +548,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 			}
 			let pdf = self.drawingView.drawing.pdf()
 			do {
-				try pdf?.write(to: sp.url!)
+				try pdf.write(to: sp.url!)
 			} catch {
 				
 			}
