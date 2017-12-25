@@ -13,6 +13,7 @@ import DKDrawKit.DKDrawingTool
 import DKDrawKit.DKDrawingToolProtocol
 import DrawKitSwift
 
+import DKDrawKit.DKSweptAngleGradient
 
 import DKDrawKit.CurveFit
 import DKDrawKit.DKArcPath
