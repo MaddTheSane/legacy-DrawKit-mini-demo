@@ -26,7 +26,7 @@
 {
 	// sets the tool controller's flag to the inverted state of the checkbox
 	
-	[(DKToolController*)[mDrawingView controller] setAutomaticallyRevertsToSelectionTool:![sender intValue]];
+	((DKToolController*)mDrawingView.controller).automaticallyRevertsToSelectionTool = ![sender intValue];
 }
 
 
@@ -37,8 +37,8 @@
 	// get the style of the selected object
 	
 	DKStyle* style = [self styleOfSelectedObject];
-	[style setFillColour:[sender color]];
-	[[mDrawingView undoManager] setActionName:@"Change Fill Colour"];
+	style.fillColour = [sender color];
+	[mDrawingView.undoManager setActionName:@"Change Fill Colour"];
 }
 
 
@@ -49,8 +49,8 @@
 	// get the style of the selected object
 	
 	DKStyle* style = [self styleOfSelectedObject];
-	[style setStrokeColour:[sender color]];
-	[[mDrawingView undoManager] setActionName:@"Change Stroke Colour"];
+	style.strokeColour = [sender color];
+	[mDrawingView.undoManager setActionName:@"Change Stroke Colour"];
 }
 
 
@@ -61,16 +61,16 @@
 	// get the style of the selected object
 	
 	DKStyle* style = [self styleOfSelectedObject];
-	[style setStrokeWidth:[sender floatValue]];
+	style.strokeWidth = [sender floatValue];
 	
 	// synchronise the text field and the stepper so they both have the same value
 	
 	if( sender == mStyleStrokeWidthStepper )
-		[mStyleStrokeWidthTextField setFloatValue:[sender floatValue]];
+		mStyleStrokeWidthTextField.floatValue = [sender floatValue];
 	else
-		[mStyleStrokeWidthStepper setFloatValue:[sender floatValue]];
+		mStyleStrokeWidthStepper.floatValue = [sender floatValue];
 	
-	[[mDrawingView undoManager] setActionName:@"Change Stroke Width"];
+	[mDrawingView.undoManager setActionName:@"Change Stroke Width"];
 }
 
 
@@ -85,12 +85,12 @@
 	if ( removing )
 	{
 		[style setFillColour:nil];
-		[[mDrawingView undoManager] setActionName:@"Delete Fill"];
+		[mDrawingView.undoManager setActionName:@"Delete Fill"];
 	}
 	else
 	{
-		[style setFillColour:[mStyleFillColourWell color]];
-		[[mDrawingView undoManager] setActionName:@"Add Fill"];
+		style.fillColour = mStyleFillColourWell.color;
+		[mDrawingView.undoManager setActionName:@"Add Fill"];
 	}
 }
 
@@ -106,12 +106,12 @@
 	if ( removing )
 	{
 		[style setStrokeColour:nil];
-		[[mDrawingView undoManager] setActionName:@"Delete Stroke"];
+		[mDrawingView.undoManager setActionName:@"Delete Stroke"];
 	}
 	else
 	{
-		[style setStrokeColour:[mStyleStrokeColourWell color]];
-		[[mDrawingView undoManager] setActionName:@"Add Stroke"];
+		style.strokeColour = mStyleStrokeColourWell.color;
+		[mDrawingView.undoManager setActionName:@"Add Stroke"];
 	}
 }
 
@@ -123,7 +123,7 @@
 	// the drawing's grid layer already knows how to do this - just pass it the selected cell from where it
 	// can extract the tag which it interprets as one of the standard grids.
 	
-	[[[mDrawingView drawing] gridLayer] setMeasurementSystemAction:[sender selectedCell]];
+	[mDrawingView.drawing.gridLayer setMeasurementSystemAction:[sender selectedCell]];
 }
 
 
@@ -131,7 +131,7 @@
 {
 	// set the drawing's snapToGrid flag to match the sender's state
 	
-	[[mDrawingView drawing] setSnapsToGrid:[sender intValue]];
+	mDrawingView.drawing.snapsToGrid = [sender intValue];
 }
 
 
@@ -145,7 +145,7 @@
 	
 	// add it to the drawing and make it active - this triggers notifications which update the UI
 	
-	[[mDrawingView drawing] addLayer:newLayer andActivateIt:YES];
+	[mDrawingView.drawing addLayer:newLayer andActivateIt:YES];
 	
 	// drawing now owns the layer so we can release it
 	
@@ -153,7 +153,7 @@
 	
 	// inform the Undo Manager what we just did:
 	
-	[[mDrawingView undoManager] setActionName:@"New Drawing Layer"];
+	[mDrawingView.undoManager setActionName:@"New Drawing Layer"];
 }
 
 
@@ -163,15 +163,15 @@
 {
 	// removing the active (selected) layer - first find that layer
 	
-	DKLayer* activeLayer = [[mDrawingView drawing] activeLayer];
+	DKLayer* activeLayer = mDrawingView.drawing.activeLayer;
 	
 	// remove it and activate another (passing nil tells the drawing to use its nous to activate something sensible)
 	
-	[[mDrawingView drawing] removeLayer:activeLayer andActivateLayer:nil];
+	[mDrawingView.drawing removeLayer:activeLayer andActivateLayer:nil];
 	
 	// inform the Undo Manager what we just did:
 	
-	[[mDrawingView undoManager] setActionName:@"Delete Drawing Layer"];
+	[mDrawingView.undoManager setActionName:@"Delete Drawing Layer"];
 }
 
 
@@ -192,13 +192,13 @@
 {
 	// change the selection in the layer table to match the actual layer that has been activated
 	
-	DKDrawing* dwg = [mDrawingView drawing];
+	DKDrawing* dwg = mDrawingView.drawing;
 	
 	if( dwg != nil )
 	{
 		// now find the active layer's index and set the selection to the same value
 		
-		NSUInteger index = [dwg indexOfLayer:[dwg activeLayer]];
+		NSUInteger index = [dwg indexOfLayer:dwg.activeLayer];
 		
 		if( index != NSNotFound )
 			[mLayerTable selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
@@ -227,13 +227,13 @@
 	
 	// which tool was selected?
 	
-	DKDrawingTool*	tool = [[note object] drawingTool];
-	NSString*		toolName = [tool registeredName];
+	DKDrawingTool*	tool = [note.object drawingTool];
+	NSString*		toolName = tool.registeredName;
 	
 	// keep the "sticky" checkbox synchronised with the tool controller's actual state
 	
-	BOOL sticky = ![(DKToolController*)[mDrawingView controller] automaticallyRevertsToSelectionTool];
-	[mToolStickyCheckbox setIntValue:sticky];
+	BOOL sticky = !((DKToolController*)mDrawingView.controller).automaticallyRevertsToSelectionTool;
+	mToolStickyCheckbox.intValue = sticky;
 	
 	// search through the matrix to find the cell whose title matches the tool's name,
 	// and select it.
@@ -249,7 +249,7 @@
 		{
 			cell = [mToolMatrix cellAtRow:rr column:cc];
 			
-			if([[cell title] isEqualToString:toolName])
+			if([cell.title isEqualToString:toolName])
 			{
 				[mToolMatrix selectCellAtRow:rr column:cc];
 				return;
@@ -279,10 +279,10 @@
 	// set up the fill controls if the style has a fill property, or disable them
 	// altogether if it does not.
 	
-	if([style hasFill])
+	if(style.hasFill)
 	{
-		rast = [[style renderersOfClass:[DKFill class]] lastObject];
-		temp = [(DKFill*)rast colour];
+		rast = [style renderersOfClass:[DKFill class]].lastObject;
+		temp = ((DKFill*)rast).colour;
 		[mStyleFillColourWell setEnabled:YES];
 		[mStyleFillCheckbox setIntValue:YES];
 	}
@@ -292,16 +292,16 @@
 		[mStyleFillColourWell setEnabled:NO];
 		[mStyleFillCheckbox setIntValue:NO];
 	}	
-	[mStyleFillColourWell setColor:temp];
+	mStyleFillColourWell.color = temp;
 	
 	// set up the stroke controls if the style has a stroke property, or disable them
 	// altogether if it does not.
 
-	if([style hasStroke])
+	if(style.hasStroke)
 	{
-		rast = [[style renderersOfClass:[DKStroke class]] lastObject];
-		temp = [(DKStroke*)rast colour];
-		sw = [(DKStroke*)rast width];
+		rast = [style renderersOfClass:[DKStroke class]].lastObject;
+		temp = ((DKStroke*)rast).colour;
+		sw = ((DKStroke*)rast).width;
 		[mStyleStrokeColourWell setEnabled:YES];
 		[mStyleStrokeWidthStepper setEnabled:YES];
 		[mStyleStrokeWidthTextField setEnabled:YES];
@@ -317,9 +317,9 @@
 		[mStyleStrokeCheckbox setIntValue:NO];
 	}
 	
-	[mStyleStrokeColourWell setColor:temp];
-	[mStyleStrokeWidthStepper setFloatValue:sw];
-	[mStyleStrokeWidthTextField setFloatValue:sw];
+	mStyleStrokeColourWell.color = temp;
+	mStyleStrokeWidthStepper.floatValue = sw;
+	mStyleStrokeWidthTextField.floatValue = sw;
 }
 
 
@@ -331,18 +331,18 @@
 	
 	// get the active layer, but only if it's one that supports drawable objects
 	
-	DKObjectDrawingLayer* activeLayer = [[mDrawingView drawing] activeLayerOfClass:[DKObjectDrawingLayer class]];
+	DKObjectDrawingLayer* activeLayer = [mDrawingView.drawing activeLayerOfClass:[DKObjectDrawingLayer class]];
 	
 	if( activeLayer != nil )
 	{
 		// get the selected objects and use the style of the last object, corresponding to the
 		// one drawn last, or on top of all the others.
 		
-		NSArray* selectedObjects = [activeLayer selectedAvailableObjects];
+		NSArray* selectedObjects = activeLayer.selectedAvailableObjects;
 		
-		if(selectedObjects != nil && [selectedObjects count] > 0 )
+		if(selectedObjects != nil && selectedObjects.count > 0 )
 		{
-			selectedStyle = [(DKDrawableObject*)[selectedObjects lastObject] style];
+			selectedStyle = ((DKDrawableObject*)selectedObjects.lastObject).style;
 			
 			[selectedStyle setLocked:NO];	// ensure it can be edited
 		}
@@ -379,12 +379,12 @@
 	[[NSNotificationCenter defaultCenter]	addObserver:self
 											selector:@selector(activeLayerDidChange:)
 											name:kDKDrawingActiveLayerDidChange
-											object:[mDrawingView drawing]];
+											object:mDrawingView.drawing];
 											
 	[[NSNotificationCenter defaultCenter]	addObserver:self
 											selector:@selector(numberOfLayersChanged:)
 											name:kDKLayerGroupNumberOfLayersDidChange
-											object:[mDrawingView drawing]];
+											object:mDrawingView.drawing];
 
 	[[NSNotificationCenter defaultCenter]	addObserver:self
 											selector:@selector(selectedToolDidChange:)
@@ -395,7 +395,7 @@
 	// up the user-interface correctly this first time, just call the responder method directly now.
 	
 	[self activeLayerDidChange:nil];
-	[[mDrawingView window] makeFirstResponder:mDrawingView];
+	[mDrawingView.window makeFirstResponder:mDrawingView];
 }
 
 
@@ -406,7 +406,7 @@
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView*) aTable
 {
-	return [[mDrawingView drawing] countOfLayers];
+	return mDrawingView.drawing.countOfLayers;
 }
 
 
@@ -414,7 +414,7 @@
 				objectValueForTableColumn:(NSTableColumn *)aTableColumn
 				row:(NSInteger)rowIndex
 {
-	return [[[[mDrawingView drawing] layers] objectAtIndex:rowIndex] valueForKey:[aTableColumn identifier]];
+	return [mDrawingView.drawing.layers[rowIndex] valueForKey:aTableColumn.identifier];
 }
 
 
@@ -423,8 +423,8 @@
 				forTableColumn:(NSTableColumn *)aTableColumn
 				row:(NSInteger)rowIndex
 {
-	DKLayer* layer = [[[mDrawingView drawing] layers] objectAtIndex:rowIndex];
-	[layer setValue:anObject forKey:[aTableColumn identifier]];
+	DKLayer* layer = mDrawingView.drawing.layers[rowIndex];
+	[layer setValue:anObject forKey:aTableColumn.identifier];
 }
 
 #pragma mark -
@@ -434,12 +434,12 @@
 {
 	// when the user selects a different layer in the table, change the real active layer to match.
 	
-	if ([aNotification object] == mLayerTable)
+	if (aNotification.object == mLayerTable)
 	{
-		NSInteger row = [mLayerTable selectedRow];
+		NSInteger row = mLayerTable.selectedRow;
 		
 		if ( row != -1 )
-			[[mDrawingView drawing] setActiveLayer:[[mDrawingView drawing] objectInLayersAtIndex:row]];
+			[mDrawingView.drawing setActiveLayer:[mDrawingView.drawing objectInLayersAtIndex:row]];
 	}
 }
 
@@ -458,7 +458,7 @@
 	// for each new object created, so each has its own individual style which can be edited independently.
 	
 	DKStyle* ds = [DKStyle styleWithFillColour:[NSColor orangeColor] strokeColour:[NSColor blackColor] strokeWidth:2.0];
-	[ds setName:@"Demo Style"];
+	ds.name = @"Demo Style";
 	
 	[DKObjectCreationTool setStyleForCreatedObjects:ds];
 	
@@ -475,7 +475,7 @@
 	sp.allowedFileTypes = @[(NSString*)kUTTypePDF];
 	[sp setCanSelectHiddenExtension:YES];
 	
-	sp.nameFieldStringValue = [[self window] title];
+	sp.nameFieldStringValue = self.window.title;
 	[sp beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse result) {
 		[self savePanelDidEnd:sp returnCode:result contextInfo:NULL];
 	}];
@@ -486,8 +486,8 @@
 {
 	if( returnCode == NSOKButton )
 	{
-		NSData* pdf = [[mDrawingView drawing] pdf];
-		[pdf writeToURL:[panel URL] atomically:YES];
+		NSData* pdf = [mDrawingView.drawing pdf];
+		[pdf writeToURL:panel.URL atomically:YES];
 	}
 }
 

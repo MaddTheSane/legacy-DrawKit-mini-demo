@@ -67,6 +67,6 @@
 
 // Supporting methods
 - (void)		updateControlsForSelection:(NSArray*) selection;
-- (DKStyle*)	styleOfSelectedObject;
+@property (readonly, copy) DKStyle *styleOfSelectedObject;
 
 @end
