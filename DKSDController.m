@@ -18,7 +18,7 @@
 	// the valid name of a registered tool. The selected button cell is just such an object.
 	
 	NSButtonCell* cell = [sender selectedCell];
-	[mDrawingView selectDrawingToolByName:cell];
+	[(DKToolController*)mDrawingView.controller selectDrawingToolByName:cell];
 }
 
 
@@ -198,7 +198,7 @@
 	{
 		// now find the active layer's index and set the selection to the same value
 		
-		unsigned index = [dwg indexOfLayer:[dwg activeLayer]];
+		NSUInteger index = [dwg indexOfLayer:[dwg activeLayer]];
 		
 		if( index != NSNotFound )
 			[mLayerTable selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
@@ -404,7 +404,7 @@
 #pragma mark - as the TableView dataSource
 
 
-- (int)			numberOfRowsInTableView:(NSTableView*) aTable
+- (NSInteger)numberOfRowsInTableView:(NSTableView*) aTable
 {
 	return [[mDrawingView drawing] countOfLayers];
 }
@@ -412,7 +412,7 @@
 
 - (id)			tableView:(NSTableView *)aTableView
 				objectValueForTableColumn:(NSTableColumn *)aTableColumn
-				row:(int)rowIndex
+				row:(NSInteger)rowIndex
 {
 	return [[[[mDrawingView drawing] layers] objectAtIndex:rowIndex] valueForKey:[aTableColumn identifier]];
 }
@@ -421,7 +421,7 @@
 - (void)		tableView:(NSTableView *)aTableView
 				setObjectValue:anObject
 				forTableColumn:(NSTableColumn *)aTableColumn
-				row:(int)rowIndex
+				row:(NSInteger)rowIndex
 {
 	DKLayer* layer = [[[mDrawingView drawing] layers] objectAtIndex:rowIndex];
 	[layer setValue:anObject forKey:[aTableColumn identifier]];
@@ -436,7 +436,7 @@
 	
 	if ([aNotification object] == mLayerTable)
 	{
-		int row = [mLayerTable selectedRow];
+		NSInteger row = [mLayerTable selectedRow];
 		
 		if ( row != -1 )
 			[[mDrawingView drawing] setActiveLayer:[[mDrawingView drawing] objectInLayersAtIndex:row]];
@@ -472,19 +472,17 @@
 {
 	NSSavePanel* sp = [NSSavePanel savePanel];
 	
-	[sp setRequiredFileType:@"pdf"];
+	sp.allowedFileTypes = @[(NSString*)kUTTypePDF];
 	[sp setCanSelectHiddenExtension:YES];
 	
-	[sp beginSheetForDirectory:nil
-		file:[[self window] title]
-		modalForWindow:[self window]
-		modalDelegate:self
-		didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:)
-		contextInfo:NULL];
+	sp.nameFieldStringValue = [[self window] title];
+	[sp beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse result) {
+		[self savePanelDidEnd:sp returnCode:result contextInfo:NULL];
+	}];
 }
 
 
-- (void)		savePanelDidEnd:(NSSavePanel*) panel returnCode:(int) returnCode contextInfo:(void*) contextInfo
+- (void)savePanelDidEnd:(NSSavePanel*) panel returnCode:(NSModalResponse) returnCode contextInfo:(void*) contextInfo
 {
 	if( returnCode == NSOKButton )
 	{

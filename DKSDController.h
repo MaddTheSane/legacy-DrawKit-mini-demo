@@ -7,36 +7,37 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <DKDrawKit/DKDrawingView.h>
 
 @class DKStyle;
 
 // the controller class - this is the only custom class used in this demo application
 
-@interface DKSDController : NSWindowController
+@interface DKSDController : NSWindowController <NSApplicationDelegate, NSTableViewDataSource, NSTableViewDelegate, NSWindowDelegate>
 {
 // TOOLS
-	IBOutlet	id	mToolMatrix;					// matrix of buttons for selecting the drawing tool
-	IBOutlet	id	mToolStickyCheckbox;			// checkbox for setting "sticky" state of tools
+	IBOutlet NSMatrix *mToolMatrix; 		//!< matrix of buttons for selecting the drawing tool
+	IBOutlet NSButton *mToolStickyCheckbox;	//!< checkbox for setting "sticky" state of tools
 
 // STYLE
-	IBOutlet	id	mStyleFillCheckbox;				// checkbox for enabling the "fill" property
-	IBOutlet	id	mStyleFillColourWell;			// colour well for the fill's colour
-	IBOutlet	id	mStyleStrokeCheckbox;			// checkbox for enabling the "stroke" property
-	IBOutlet	id	mStyleStrokeColourWell;			// colour well for the stroke's colour
-	IBOutlet	id	mStyleStrokeWidthTextField;		// text field for the stroke's width
-	IBOutlet	id	mStyleStrokeWidthStepper;		// stepper buttons for the stroke's width
+	IBOutlet NSButton *mStyleFillCheckbox;				//!< checkbox for enabling the "fill" property
+	IBOutlet NSColorWell *mStyleFillColourWell;			//!< colour well for the fill's colour
+	IBOutlet NSButton *mStyleStrokeCheckbox;			//!< checkbox for enabling the "stroke" property
+	IBOutlet NSColorWell *mStyleStrokeColourWell;		//!< colour well for the stroke's colour
+	IBOutlet NSTextField *mStyleStrokeWidthTextField;	//!< text field for the stroke's width
+	IBOutlet NSStepper *mStyleStrokeWidthStepper;		//!< stepper buttons for the stroke's width
 
 // GRID
-	IBOutlet	id	mGridMatrix;					// matrix of buttons for selecting the grid to use
-	IBOutlet	id	mGridSnapCheckbox;				// checkbox to enable "snap to grid"
+	IBOutlet NSMatrix *mGridMatrix;			//!< matrix of buttons for selecting the grid to use
+	IBOutlet NSButton *mGridSnapCheckbox;	//!< checkbox to enable "snap to grid"
 
 // LAYERS
-	IBOutlet	id	mLayerTable;					// table view for listing the drawing's layers
-	IBOutlet	id	mLayerAddButton;				// button for adding a new layer
-	IBOutlet	id	mLayerRemoveButton;				// button for removing the active (selected) layer
+	IBOutlet NSTableView *mLayerTable;		//!< table view for listing the drawing's layers
+	IBOutlet NSButton *mLayerAddButton;		//!< button for adding a new layer
+	IBOutlet NSButton *mLayerRemoveButton;	//!< button for removing the active (selected) layer
 
 // MAIN VIEW
-	IBOutlet	id	mDrawingView;					// outlet to the main DKDrawingView that displays the content (and owns the drawing)
+	IBOutlet DKDrawingView *mDrawingView;	//!< outlet to the main DKDrawingView that displays the content (and owns the drawing)
 }
 
 // TOOLS
