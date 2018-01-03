@@ -842,22 +842,17 @@
                             <rect key="frame" x="1" y="1" width="813" height="572"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <customView translatesAutoresizingMaskIntoConstraints="NO" id="375" customClass="DKDrawingView">
+                                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="375" customClass="DKDrawingView">
                                     <rect key="frame" x="0.0" y="0.0" width="1023" height="768"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 </customView>
                             </subviews>
-                            <constraints>
-                                <constraint firstItem="375" firstAttribute="top" secondItem="maF-O7-439" secondAttribute="top" constant="-196" id="8gC-I2-6vs"/>
-                                <constraint firstAttribute="trailing" secondItem="375" secondAttribute="trailing" constant="-210" id="XBp-SC-HGS"/>
-                                <constraint firstAttribute="bottom" secondItem="375" secondAttribute="bottom" id="lkM-iz-8w0"/>
-                                <constraint firstItem="375" firstAttribute="leading" secondItem="maF-O7-439" secondAttribute="leading" id="ozE-cX-hb3"/>
-                            </constraints>
                         </clipView>
                         <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="492">
                             <rect key="frame" x="1" y="557" width="813" height="16"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="491">
+                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="0.98979591836734693" horizontal="NO" id="491">
                             <rect key="frame" x="798" y="1" width="16" height="572"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
