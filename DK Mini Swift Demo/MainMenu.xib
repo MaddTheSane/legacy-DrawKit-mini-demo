@@ -647,7 +647,7 @@
                     <textField verticalHuggingPriority="750" id="395">
                         <rect key="frame" x="11" y="539" width="38" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="TOOL" id="396">
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="TOOL" id="396">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" red="0.35869562630000001" green="0.35869562630000001" blue="0.35869562630000001" alpha="1" colorSpace="calibratedRGB"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -656,7 +656,7 @@
                     <textField verticalHuggingPriority="750" id="397">
                         <rect key="frame" x="11" y="263" width="38" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="GRID" id="398">
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="GRID" id="398">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" red="0.35869562630000001" green="0.35869562630000001" blue="0.35869562630000001" alpha="1" colorSpace="calibratedRGB"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -678,10 +678,10 @@
                             <action selector="styleStrokeColourAction:" target="426" id="429"/>
                         </connections>
                     </colorWell>
-                    <textField verticalHuggingPriority="750" id="401">
-                        <rect key="frame" x="11" y="370" width="38" height="17"/>
+                    <textField verticalHuggingPriority="750" misplaced="YES" id="401">
+                        <rect key="frame" x="11" y="370" width="44" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="STYLE" id="402">
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="STYLE" id="402">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" red="0.35869562630000001" green="0.35869562630000001" blue="0.35869562630000001" alpha="1" colorSpace="calibratedRGB"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -779,10 +779,10 @@
                             <outlet property="nextKeyView" destination="372" id="488"/>
                         </connections>
                     </scrollView>
-                    <textField verticalHuggingPriority="750" id="420">
-                        <rect key="frame" x="11" y="172" width="44" height="14"/>
+                    <textField verticalHuggingPriority="750" misplaced="YES" id="420">
+                        <rect key="frame" x="11" y="172" width="55" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="LAYERS" id="421">
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="LAYERS" id="421">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" red="0.35869562630000001" green="0.35869562630000001" blue="0.35869562630000001" alpha="1" colorSpace="calibratedRGB"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

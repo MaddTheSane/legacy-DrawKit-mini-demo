@@ -255,16 +255,14 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	
 	
 	// MARK: - GRID
+	/// the drawing's grid layer already knows how to do this - just pass it the selected cell from where it
+	/// can extract the tag which it interprets as one of the standard grids.
 	@IBAction func gridMatrixAction(_ sender: AnyObject?) {
-		// the drawing's grid layer already knows how to do this - just pass it the selected cell from where it
-		// can extract the tag which it interprets as one of the standard grids.
-		
 		drawingView.drawing.gridLayer?.setMeasurementSystemAction(sender?.selectedCell())
 	}
 	
+	/// Set the drawing's snapToGrid flag to match the sender's state.
 	@IBAction func snapToGridAction(_ sender: AnyObject?) {
-		// set the drawing's snapToGrid flag to match the sender's state
-		
 		drawingView.drawing.snapsToGrid = sender?.intValue != 0
 	}
 	
@@ -304,16 +302,14 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	
 	// MARK: -
 	
+	/// The selection changed within the drawing - update the UI to match the state of whatever was selected. We pass nil
+	/// because in fact we just grab the current selection directly.
 	@objc private func drawingSelectionDidChange(_ note: Notification) {
-		// the selection changed within the drawing - update the UI to match the state of whatever was selected. We pass nil
-		// because in fact we just grab the current selection directly.
-
 		updateControlsForSelection(nil)
 	}
 	
+	/// Change the selection in the layer table to match the actual layer that has been activated.
 	@objc private func activeLayerDidChange(_ note: Notification?) {
-		// change the selection in the layer table to match the actual layer that has been activated
-		
 		if let dwg = drawingView.drawing, let activeLayer = dwg.activeLayer {
 			// now find the active layer's index and set the selection to the same value
 			let index = dwg.index(of: activeLayer)
@@ -323,9 +319,8 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		}
 	}
 	
+	/// Update the table to match the number of layers in the drawing.
 	@objc private func numberOfLayersChanged(_ note: Notification) {
-		// update the table to match the number of layers in the drawing
-
 		layerTable.reloadData()
 		
 		// re-establish the correct selection - requires a small delay so that the table is fully reloaded before the
@@ -336,11 +331,10 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		}
 	}
 	
+	/// The selected tool changed - find out which button cell matches and select it so that
+	/// the tool UI and the actual selected tool agree. This is necessary because when a tool is automatically
+	/// "sprung back" the UI needs to keep up with that automatic change.
 	@objc private func selectedToolDidChange(_ note: Notification) {
-		// the selected tool changed - find out which button cell matches and select it so that
-		// the tool UI and the actual selected tool agree. This is necessary because when a tool is automatically
-		// "sprung back" the UI needs to keep up with that automatic change.
-		
 		// which tool was selected?
 		
 		let tool = (note.object as? DKToolController)?.drawingTool
@@ -373,13 +367,11 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	
 	// MARK: -
 	
+	/// Update all necessary UI controls to match the state of the selected object. Note that this ignores the selection passed to it
+	/// and just gets the info directly. It also doesn't bother to worry about more than one selected object - it just uses the info from
+	/// the topmost object - for this simple demo that's sufficient.
 	func updateControlsForSelection(_ selection: [Any]?) {
-		// update all necessary UI controls to match the state of the selected object. Note that this ignores the selection passed to it
-		// and just gets the info directly. It also doesn't bother to worry about more than one selected object - it just uses the info from
-		// the topmost object - for this simple demo that's sufficient.
-		
 		// get the selected object's style
-
 		guard let style = styleOfSelectedObject else {
 			styleFillColourWell.color = .white
 			styleStrokeColourWell.color = .white
@@ -552,7 +544,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 			do {
 				try pdf.write(to: sp.url!)
 			} catch {
-				
+				NSApp.presentError(error)
 			}
 		}
 	}
