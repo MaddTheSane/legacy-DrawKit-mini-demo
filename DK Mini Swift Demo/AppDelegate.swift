@@ -314,7 +314,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 			// now find the active layer's index and set the selection to the same value
 			let index = dwg.index(of: activeLayer)
 			if index != NSNotFound {
-				layerTable.selectRowIndexes(IndexSet(integer: Int(index)), byExtendingSelection: false)
+				layerTable.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
 			}
 		}
 	}
@@ -505,7 +505,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		}
 		let row = layerTable.selectedRow
 		if row != -1 {
-			drawingView.drawing.setActiveLayer(drawingView.drawing.objectInLayers(at: UInt(row)))
+			drawingView.drawing.setActiveLayer(drawingView.drawing.objectInLayers(at: row))
 		}
 	}
 	
