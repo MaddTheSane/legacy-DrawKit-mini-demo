@@ -113,17 +113,17 @@ import DKDrawKit.GCObservableObject
 import DKDrawKit.GCUndoManager
 import DKDrawKit.GCZoomView
 import DKDrawKit.LogEvent
-import DKDrawKit.NSAffineTransform_DKAdditions
-import DKDrawKit.NSAttributedString_DKAdditions
-import DKDrawKit.NSBezierPath_Editing
-import DKDrawKit.NSBezierPath_Geometry
-import DKDrawKit.NSBezierPath_Text
-import DKDrawKit.NSColor_DKAdditions
-import DKDrawKit.NSDictionary_DeepCopy
-import DKDrawKit.NSImage_DKAdditions
-import DKDrawKit.NSMutableArray_DKAdditions
-import DKDrawKit.NSShadow_Scaling
-import DKDrawKit.NSString_DKAdditions
+import DKDrawKit.DKAdditions.NSAffineTransform
+import DKDrawKit.DKAdditions.NSAttributedString
+import DKDrawKit.DKAdditions.NSBezierPath.Editing
+import DKDrawKit.DKAdditions.NSBezierPath.Geometry
+import DKDrawKit.DKAdditions.NSBezierPath.Text
+import DKDrawKit.DKAdditions.NSColor
+import DKDrawKit.DKAdditions.NSDictionary.DeepCopy
+import DKDrawKit.DKAdditions.NSImage
+import DKDrawKit.DKAdditions.NSMutableArray
+import DKDrawKit.DKAdditions.NSShadow.Scaling
+import DKDrawKit.DKAdditions.NSString
 
 @NSApplicationMain
 class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSource, NSTableViewDelegate, NSWindowDelegate {
