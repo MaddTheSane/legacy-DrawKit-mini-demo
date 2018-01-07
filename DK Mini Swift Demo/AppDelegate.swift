@@ -516,7 +516,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		
 		DKStyle.stylesAreSharableByDefault = false
 		
-		// set up an initial style to apply to all new objects created. Because sharin gis off above, this style is copied
+		// set up an initial style to apply to all new objects created. Because sharing is off above, this style is copied
 		// for each new object created, so each has its own individual style which can be edited independently.
 		
 		let ds = DKStyle(fillColour: NSColor.orange, strokeColour: NSColor.black, strokeWidth: 2.0)
