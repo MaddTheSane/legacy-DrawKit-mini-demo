@@ -11,6 +11,7 @@ import DKDrawKit.DKGridLayer
 import DKDrawKit.DKDrawingView
 import DKDrawKit.DKDrawingTool
 import DKDrawKit.DKDrawingToolProtocol
+import DKDrawKit.LogEvent
 import DrawKitSwift
 
 import DKDrawKit.DKSweptAngleGradient
@@ -165,10 +166,6 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	// MARK: - MAIN VIEW
 	/// outlet to the main DKDrawingView that displays the content (and owns the drawing)
 	@IBOutlet weak var drawingView: DKDrawingView!
-
-	func applicationWillTerminate(_ aNotification: Notification) {
-		// Insert code here to tear down your application
-	}
 
 	// MARK: - TOOLS
 	/// the drawing view can handle this for us, provided we pass it an object that responds to `-title` and returns
@@ -547,6 +544,14 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 			} catch {
 				NSApp.presentError(error)
 			}
+		}
+	}
+	
+	@IBAction func showAboutBox(_ sender: Any?) {
+		if let isOptionKeyDown = NSApp.currentEvent?.modifierFlags.contains(.option), isOptionKeyDown {
+			LoggingController.shared.showLoggingWindow()
+		} else {
+			NSApp.orderFrontStandardAboutPanel(sender)
 		}
 	}
 	
