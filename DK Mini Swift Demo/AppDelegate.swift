@@ -258,12 +258,12 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	/// the drawing's grid layer already knows how to do this - just pass it the selected cell from where it
 	/// can extract the tag which it interprets as one of the standard grids.
 	@IBAction func gridMatrixAction(_ sender: AnyObject?) {
-		drawingView.drawing.gridLayer?.setMeasurementSystemAction(sender?.selectedCell())
+		drawingView.drawing?.gridLayer?.setMeasurementSystemAction(sender?.selectedCell())
 	}
 	
 	/// Set the drawing's snapToGrid flag to match the sender's state.
 	@IBAction func snapToGridAction(_ sender: AnyObject?) {
-		drawingView.drawing.snapsToGrid = sender?.intValue != 0
+		drawingView.drawing?.snapsToGrid = sender?.intValue != 0
 	}
 	
 	
@@ -275,7 +275,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		
 		// add it to the drawing and make it active - this triggers notifications which update the UI
 
-		drawingView.drawing.addLayer(newLayer, andActivateIt: true)
+		drawingView.drawing?.addLayer(newLayer, andActivateIt: true)
 		
 		// drawing now owns the layer so we can release it
 		
@@ -289,11 +289,11 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	@IBAction func layerRemoveButtonAction(_ sender: Any?) {
 		// removing the active (selected) layer - first find that layer
 		
-		let activeLayer = drawingView.drawing.activeLayer
+		let activeLayer = drawingView.drawing?.activeLayer
 		
 		// remove it and activate another (passing nil tells the drawing to use its nous to activate something sensible)
 
-		drawingView.drawing.removeLayer(activeLayer!, andActivate: nil)
+		drawingView.drawing?.removeLayer(activeLayer!, andActivate: nil)
 		
 		// inform the Undo Manager what we just did:
 
@@ -427,7 +427,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 		var selectedStyle: DKStyle? = nil
 		
 		// get the active layer, but only if it's one that supports drawable objects
-		if let activeLayer = drawingView.drawing.activeLayer(of: DKObjectDrawingLayer.self) {
+		if let activeLayer = drawingView.drawing?.activeLayer(of: DKObjectDrawingLayer.self) {
 			// get the selected objects and use the style of the last object, corresponding to the
 			// one drawn last, or on top of all the others.
 
@@ -504,8 +504,8 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 			return
 		}
 		let row = layerTable.selectedRow
-		if row != -1 {
-			drawingView.drawing.setActiveLayer(drawingView.drawing.objectInLayers(at: row))
+		if row != -1, let drawing = drawingView.drawing {
+			drawing.setActiveLayer(drawing.objectInLayers(at: row))
 		}
 	}
 	
@@ -540,9 +540,10 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 			guard returnCode == .OK else {
 				return
 			}
-			let pdf = self.drawingView.drawing.pdf()
 			do {
-				try pdf.write(to: sp.url!)
+				if let pdf = self.drawingView.drawing?.pdf(), let url = sp.url {
+					try pdf.write(to: url)
+				}
 			} catch {
 				NSApp.presentError(error)
 			}
