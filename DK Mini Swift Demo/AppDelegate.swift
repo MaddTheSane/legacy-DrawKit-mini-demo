@@ -268,7 +268,7 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 	@IBAction func layerAddButtonAction(_ sender: Any?) {
 		// adding a new layer - first create it
 
-		let newLayer = DKObjectDrawingLayer()!
+		let newLayer = DKObjectDrawingLayer()
 		
 		// add it to the drawing and make it active - this triggers notifications which update the UI
 
@@ -428,7 +428,8 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 			// get the selected objects and use the style of the last object, corresponding to the
 			// one drawn last, or on top of all the others.
 
-			if let selectedObjects = activeLayer.selectedAvailableObjects, selectedObjects.count != 0 {
+			let selectedObjects = activeLayer.selectedAvailableObjects
+			if selectedObjects.count != 0 {
 				selectedStyle = selectedObjects.last!.style
 				
 				// ensure it can be edited
