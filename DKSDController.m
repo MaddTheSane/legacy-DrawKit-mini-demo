@@ -464,7 +464,7 @@
 	
 	// register the default set of tools (Select, Rectangle, Oval, etc)
 	
-	[DKDrawingTool registerStandardTools];
+	[DKToolRegistry sharedToolRegistry];
 }
 
 
