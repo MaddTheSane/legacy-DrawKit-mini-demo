@@ -26,6 +26,7 @@ import DKDrawKit.DKCIFilterRastGroup
 import DKDrawKit.DKCategoryManager
 import DKDrawKit.DKCommonTypes
 import DKDrawKit.DKCropTool
+import DKDrawKit.DKDashable
 import DKDrawKit.DKDistortionTransform
 import DKDrawKit.DKDrawKitMacros
 import DKDrawKit.DKDrawableContainerProtocol
