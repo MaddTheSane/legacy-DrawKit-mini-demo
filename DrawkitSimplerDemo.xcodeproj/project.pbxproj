@@ -181,9 +181,7 @@
 		29B97314FDCFA39411CA2CEA /* DrawkitSimplerDemo */ = {
 			isa = PBXGroup;
 			children = (
-				080E96DDFE201D6D7F000001 /* Classes */,
-				29B97315FDCFA39411CA2CEA /* Other Sources */,
-				29B97317FDCFA39411CA2CEA /* Resources */,
+				55774F32203DE31C00F7DE6E /* DK Mini Demo */,
 				553CF00C1FDD991A003E9342 /* DK Mini Swift Demo */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -232,6 +230,16 @@
 				553CF0211FDDC02C003E9342 /* DK Mini Swift Demo-Bridging-Header.h */,
 			);
 			path = "DK Mini Swift Demo";
+			sourceTree = "<group>";
+		};
+		55774F32203DE31C00F7DE6E /* DK Mini Demo */ = {
+			isa = PBXGroup;
+			children = (
+				080E96DDFE201D6D7F000001 /* Classes */,
+				29B97315FDCFA39411CA2CEA /* Other Sources */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+			);
+			name = "DK Mini Demo";
 			sourceTree = "<group>";
 		};
 		763F8DC01A9C6128001D1803 /* Products */ = {

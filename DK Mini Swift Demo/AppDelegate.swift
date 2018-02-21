@@ -566,7 +566,6 @@ class AppDelegate: NSWindowController, NSApplicationDelegate, NSTableViewDataSou
 			static let um = DKUndoManager()
 		}
 		
-		// ugly icky hack.
-		return unsafeBitCast(Um.um, to: UndoManager.self)
+		return Um.um
 	}
 }
