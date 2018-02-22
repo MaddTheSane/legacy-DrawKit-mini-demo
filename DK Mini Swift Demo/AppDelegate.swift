@@ -120,6 +120,7 @@ import DKDrawKit.DKAdditions.NSAttributedString
 import DKDrawKit.DKAdditions.NSBezierPath.Editing
 import DKDrawKit.DKAdditions.NSBezierPath.Geometry
 import DKDrawKit.DKAdditions.NSBezierPath.Text
+import DKDrawKit.DKAdditions.NSBezierPath.Shapes
 import DKDrawKit.DKAdditions.NSColor
 import DKDrawKit.DKAdditions.NSDictionary.DeepCopy
 import DKDrawKit.DKAdditions.NSImage
