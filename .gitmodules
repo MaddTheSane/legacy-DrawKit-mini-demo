@@ -1,5 +1,5 @@
 [submodule "DrawKit"]
 	path = DrawKit
-	url = https://github.com/MaddTheSane/DrawKit-1
-	branch = madds
+	url = https://github.com/DrawKit/DrawKit
+	branch = master
 	ignore = dirty
