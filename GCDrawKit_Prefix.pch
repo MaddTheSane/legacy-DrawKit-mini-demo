@@ -6,4 +6,6 @@
     #import <Cocoa/Cocoa.h>
 #endif
 
+#ifndef qUseLogEvent
 #define qUseLogEvent 0
+#endif
